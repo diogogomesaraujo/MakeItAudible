@@ -1,0 +1,18 @@
+<!-- templates/audio_player.html -->
+{% extends "layout.html" %}
+
+{% block title %}Audio Player{% endblock %}
+
+{% block content %}
+<div class="card text-white bg-black mb-3">
+    <h5 class="card-header">PDF Converted to MP3</h5>
+    <div class="card-body">
+        <audio controls class="w-100">
+            <source src="{{ audio_url }}" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+        <a href="{{ audio_url }}" download class="btn btn-primary mt-3">Download MP3</a>
+        <a href="{{ url_for('index') }}" class="btn btn-secondary mt-3">Convert Another PDF</a>
+    </div>
+</div>
+{% endblock %}

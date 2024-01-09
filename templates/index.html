@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+{% extends "layout.html" %}
+{% block title %}MakeItAudible!{% endblock %}
+{% block content %}
+<h1 class="text-center font-weight-bold">MakeItAudible!</h1>
+<form action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data" class="my-4">
+    <div class="custom-file mb-3">
+        <input type="file" name="file" class="custom-file-input" id="customFile" onchange="updateFileName(this)">
+        <label class="custom-file-label" for="customFile" id="customFileLabel">Choose a File</label>
+    </div>
+    <button type="submit" class="btn btn-primary btn-block">Upload</button>
+</form>
+
+<script>
+    function updateFileName(input) {
+        const label = document.getElementById("customFileLabel");
+        if (input.files.length > 0) {
+            label.innerText = input.files[0].name;
+        } else {
+            label.innerText = "Choose a File";
+        }
+    }
+</script>
+{% endblock %}

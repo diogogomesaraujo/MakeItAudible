@@ -3,8 +3,27 @@ import os
 from gtts import gTTS
 import pdfplumber
 from werkzeug.utils import secure_filename
+import pytesseract
+from PIL import Image
+from pdf2image import convert_from_path
+
+os.environ['TESSDATA_PREFIX'] = '/opt/homebrew/share/tessdata'
 
 app = Flask(__name__)
+
+def is_scanned_pdf(pdf_path):
+    with pdfplumber.open(pdf_path) as pdf:
+        first_page = pdf.pages[0]
+        text = first_page.extract_text()
+        return not bool(text)
+    
+LANGUAGE_CODES = {
+    "English": {"tesseract": "eng", "gtts": "en"},
+    "Portuguese": {"tesseract": "por", "gtts": "pt"},
+    "Spanish": {"tesseract": "spa", "gtts": "es"},
+    "French": {"tesseract": "fra", "gtts": "fr"},
+    "German": {"tesseract": "deu", "gtts": "de"},
+}
 
 # Ensure the upload and audio directories exist
 UPLOAD_FOLDER = 'uploads'
@@ -22,33 +41,43 @@ def index():
 @app.route('/upload', methods=['POST'])
 def upload_file():
     uploaded_file = request.files['file']
+    selected_language_name = request.form['language']  # This will be the full language name from the dropdown
+
+    # Get the language codes for pytesseract and gTTS
+    language_codes = LANGUAGE_CODES.get(selected_language_name, {})
+    pytesseract_lang_code = language_codes.get("tesseract")
+    gtts_lang_code = language_codes.get("gtts")
+
     if uploaded_file and uploaded_file.filename != '':
         filename = secure_filename(uploaded_file.filename)
         pdf_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         uploaded_file.save(pdf_path)
-        
-        # Process the PDF and convert to audio
-        texto_total = ""
-        with pdfplumber.open(pdf_path) as pdf:
-            for pagina in pdf.pages:
-                texto = pagina.extract_text()
-                if texto:
-                    texto_total += texto + "\n"
 
-        # Create an instance of the gTTS class and save the audio file
-        tts = gTTS(texto_total, lang='pt')
+        texto_total = ""
+
+        if is_scanned_pdf(pdf_path):
+            images = convert_from_path(pdf_path)
+            for image in images:
+                # Use the tesseract language code
+                texto_total += pytesseract.image_to_string(image, lang=pytesseract_lang_code)
+        else:
+            with pdfplumber.open(pdf_path) as pdf:
+                for page in pdf.pages:
+                    text = page.extract_text()
+                    if text:
+                        texto_total += text + "\n"
+
+        # Use the gTTS language code
+        tts = gTTS(texto_total, lang=gtts_lang_code)
         audio_filename = 'output.mp3'
         audio_path = os.path.join(app.config['AUDIO_FOLDER'], audio_filename)
         tts.save(audio_path)
 
-        # Generate a URL for the audio file
         audio_url = url_for('get_audio', filename=audio_filename)
-
-        # Return HTML with the audio controls and a download link
         return render_template('audio_player.html', audio_url=audio_url)
-    
-    # If no file is uploaded, render the 'no_file.html' template instead of just returning a string
+
     return render_template('no_file.html')
+
 
 @app.route('/audio/<filename>')
 def get_audio(filename):

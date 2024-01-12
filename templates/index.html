@@ -2,23 +2,73 @@
 {% extends "layout.html" %}
 {% block title %}MakeItAudible!{% endblock %}
 {% block content %}
-<h1 class="text-center font-weight-bold">MakeItAudible!</h1>
-<form action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data" class="my-4">
-    <div class="custom-file mb-3">
-        <input type="file" name="file" class="custom-file-input" id="customFile" onchange="updateFileName(this)">
-        <label class="custom-file-label" for="customFile" id="customFileLabel">Choose a File</label>
+<div id="loadingScreen" class="loading-screen" style="display:none;">
+    <div class="loading-content">
+        <div class="loading-spinner"></div>
+        <span class="loading-text">Converting!</span>
     </div>
-    <button type="submit" class="btn btn-primary btn-block">Upload</button>
-</form>
+</div>
+
+<div class="container">
+    <h1 class="text-center font-weight-bold my-4">MakeItAudible!</h1>
+    <form action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data" class="my-4">
+        
+        <div class="input-group mb-3">
+            <div class="custom-file">
+                <input type="file" name="file" class="custom-file-input" id="customFile">
+                <label class="custom-file-label" for="customFile">Choose a PDF file</label>
+            </div>
+            <select name="language" id="languageSelect" class="form-control custom-select ml-2" style="width: auto;">
+                <option value="English" data-short="EN">EN</option>
+                <option value="Portuguese" data-short="PT">PT</option>
+                <option value="Spanish" data-short="ES">ES</option>
+                <option value="French" data-short="FR">FR</option>
+                <option value="German" data-short="DE">DE</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-dark btn-block">Convert</button>
+    </form>
+</div>
+
+<style>
+    .input-group .custom-file {
+        flex-grow: 1;
+    }
+    .input-group .custom-select {
+        flex-grow: 0;
+        flex-shrink: 0;
+        max-width: 80px; /* Set a max-width for the language selector */
+    }
+    .custom-file-label {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .btn-dark {
+        background-color: #000; /* Black background for the button */
+        border-color: #000; /* Black border for the button */
+    }
+    .btn-dark:hover {
+        background-color: #444; /* Darker on hover */
+        border-color: #444; /* Darker border on hover */
+    }
+    /* Additional styling adjustments can be made here */
+</style>
 
 <script>
-    function updateFileName(input) {
-        const label = document.getElementById("customFileLabel");
-        if (input.files.length > 0) {
-            label.innerText = input.files[0].name;
-        } else {
-            label.innerText = "Choose a File";
-        }
-    }
+    document.getElementById('customFile').addEventListener('change', function(event) {
+        var fileName = event.target.files[0].name;
+        var label = document.getElementById('customFile').nextElementSibling;
+        label.textContent = fileName;
+    });
+    
+    // This script will change the visible text in the dropdown after selection
+    document.getElementById('languageSelect').addEventListener('change', function(event) {
+        var select = event.target;
+        var option = select.options[select.selectedIndex];
+        var shortName = option.dataset.short;
+        select.nextElementSibling.textContent = shortName;
+    });
 </script>
 {% endblock %}

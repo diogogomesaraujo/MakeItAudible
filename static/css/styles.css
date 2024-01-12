@@ -58,6 +58,22 @@ body {
     100% { transform: rotate(360deg); }
 }
 
+.loading-footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    padding: 20px;
+}
+
+.loading-note {
+    display: inline-block;
+    color: #666;
+    font-size: 0.9em;
+    margin-top: 10px; /* or adjust as needed */
+    font-style: italic;
+} 
+
 .github-corner {
     position: fixed;
     bottom: 25px;

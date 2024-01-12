@@ -7,10 +7,13 @@
         <div class="loading-spinner"></div>
         <span class="loading-text">Converting!</span>
     </div>
+    <div class="loading-footer">
+        <span class="loading-note">Larger files may take longer to convert.</span>
+    </div>
 </div>
 
 <div class="container">
-    <h1 class="text-center font-weight-bold my-4">MakeItAudible!</h1>
+    <h1 class="text-center font-weight-bold my-4" id="audibleTitle">MakeItAudible!</h1>
     <form action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data" class="my-4">
         
         <div class="input-group mb-3">
@@ -53,22 +56,34 @@
         background-color: #444; /* Darker on hover */
         border-color: #444; /* Darker border on hover */
     }
+      
     /* Additional styling adjustments can be made here */
 </style>
 
 <script>
-    document.getElementById('customFile').addEventListener('change', function(event) {
-        var fileName = event.target.files[0].name;
-        var label = document.getElementById('customFile').nextElementSibling;
-        label.textContent = fileName;
-    });
-    
-    // This script will change the visible text in the dropdown after selection
-    document.getElementById('languageSelect').addEventListener('change', function(event) {
-        var select = event.target;
-        var option = select.options[select.selectedIndex];
-        var shortName = option.dataset.short;
-        select.nextElementSibling.textContent = shortName;
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('customFile').addEventListener('change', function(event) {
+            var fileName = event.target.files[0].name;
+            var label = document.getElementById('customFile').nextElementSibling;
+            label.textContent = fileName;
+        });
+        
+        document.getElementById('languageSelect').addEventListener('change', function(event) {
+            var select = event.target;
+            var option = select.options[select.selectedIndex];
+            var shortName = option.dataset.short;
+            select.nextElementSibling.textContent = shortName;
+        });
+
+        document.getElementById('audibleTitle').addEventListener('click', function() {
+            var element = this;
+            element.classList.add('jiggle');
+        
+            // Remove the jiggle class after the animation completes
+            setTimeout(function() {
+                element.classList.remove('jiggle');
+            }, 1000); // Corresponds to the animation duration
+        });        
     });
 </script>
 {% endblock %}

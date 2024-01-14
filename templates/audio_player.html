@@ -1,18 +1,132 @@
-<!-- templates/audio_player.html -->
+<!-- FILEPATH: /Users/diogoaraujo/Desktop/MakeItAudible/templates/audio_player.html -->
 {% extends "layout.html" %}
 
-{% block title %}Audio Player{% endblock %}
+{% block title %}
+    Audio Player
+{% endblock %}
 
 {% block content %}
-<div class="card text-white bg-black mb-3">
-    <h5 class="card-header">PDF Converted to MP3</h5>
-    <div class="card-body">
-        <audio controls class="w-100">
-            <source src="{{ audio_url }}" type="audio/mpeg">
-            Your browser does not support the audio element.
-        </audio>
-        <a href="{{ audio_url }}" download class="btn btn-primary mt-3">Download MP3</a>
-        <a href="{{ url_for('index') }}" class="btn btn-secondary mt-3">Convert Another PDF</a>
+<div class="container">
+    <!-- Title that redirects to index.html -->
+    <a href="{{ url_for('index') }}" class="text-decoration-none">
+        <h1 class="text-center font-weight-bold my-4" id="audibleTitle" style="color: black;">MakeItAudible!</h1>
+    </a>
+
+    <!-- Card with audio player and PDF viewer -->
+    <div class="card text-white bg-black mb-3">
+        <div class="card-header text-white" style="padding: 0.5rem 1rem; text-align: left; font-size: 1.25rem;">PDF Converted to MP3</div>
+        <div class="card-body">
+            <!-- PDF Viewer -->
+            <div class="pdf-viewer mb-4">
+                <iframe src="{{ url_for('uploaded_file', filename=filename) }}" width="100%" height="500px" style="border:none;"></iframe>
+            </div>
+
+            <!-- Audio Player and Buttons Container -->
+            <div class="audio-player-container bg-light text-dark p-3 rounded">
+                <!-- Audio Player -->
+                <div class="audio-player mb-3">
+                    <audio controls class="w-100">
+                        <source src="{{ audio_url }}" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+
+                <!-- Buttons -->
+                <div class="button-group text-center">
+                    <a href="{{ audio_url }}" download class="btn btn-primary mx-2">Download MP3</a>
+                    <a href="{{ url_for('index') }}" class="btn btn-secondary mx-2">Convert Another PDF</a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+<script>
+    // Use PDF.js to load and display your PDF
+    var url = '{{ url_for('uploaded_file', filename=filename) }}';
+    var pdfViewerContainer = document.getElementById('pdf-viewer');
+    
+    // Initialize PDF.js
+    pdfjsLib.getDocument(url).promise.then(function(pdf) {
+        pdf.getPage(1).then(function(page) {
+            var scale = 1.5;
+            var viewport = page.getViewport({scale: scale});
+            var canvas = document.createElement('canvas');
+            var context = canvas.getContext('2d');
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+            pdfViewerContainer.appendChild(canvas);
+    
+            // Render the page
+            var renderContext = {
+                canvasContext: context,
+                viewport: viewport
+            };
+            page.render(renderContext);
+        });
+    });
+</script>
+{% endblock %}
+
+{% block additional_css %}
+<style>
+    .audio-player-container {
+        background-color: #f8f9fa; /* Light background for the container */
+    }
+
+    .text-decoration-none {
+        text-decoration: none; /* Removes underline from the title link */
+    }
+    .card {
+        border: none;
+        background-color: #343a40; /* Bootstrap dark theme color */
+    }
+    .card-header {
+        background-color: #212529; /* Black background for the header */
+        color: white; /* White text color */
+        padding: 0.5rem 1rem; /* Reduced padding for a thinner header */
+        text-align: left; /* Align text to the left */
+        font-size: 1.25rem; /* Adjust font size as necessary */
+    }
+    .card-body {
+        color: #ffffff;
+    }
+    .pdf-viewer iframe {
+        display: block; /* Prevents a small gap under the iframe */
+        border: none; /* Removes border from the iframe */
+    }
+    .audio-player {
+        background-color: #f8f9fa; /* Light background for audio player */
+        padding: 1rem; /* Padding around audio player */
+    }
+    .btn-primary,
+    .btn-secondary {
+        width: auto; /* Adjust button width to content */
+        margin: 0 10px; /* Spacing between buttons */
+    }
+    .btn-primary:hover,
+    .btn-secondary:hover {
+        opacity: 0.9; /* Slight opacity on hover for feedback */
+    }
+    #audibleTitle {
+        color: black; /* Black title text */
+        font-size: 2.5rem; /* Larger text for title */
+    }
+    /* Additional styling adjustments can be made here */
+</style>
+{% endblock %}
+
+{% block additional_js %}
+<script>
+    // JavaScript for title click effect and other interactions
+    document.addEventListener('DOMContentLoaded', function() {
+        var titleElement = document.getElementById('audibleTitle');
+        titleElement.addEventListener('click', function() {
+            titleElement.classList.add('jiggle');
+            // Remove the jiggle class after the animation completes
+            setTimeout(function() {
+                titleElement.classList.remove('jiggle');
+            }, 1000); // Corresponds to the animation duration
+        });
+    });
+</script>
 {% endblock %}

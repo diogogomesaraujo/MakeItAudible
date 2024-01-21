@@ -6,9 +6,8 @@
 
 <h4 align="center">A web application designed to convert PDF files into MP3 audio format.</h4>
 
-<p align="center">
-  <video src="demo.mp4" alt="MakeItAudible Demo" width="300" autoplay loop></video>
-</p>
+![Gravação do ecrã 2024-01-21, às 02 39 10](https://github.com/diogogomesaraujo/MakeItAudible/assets/118282799/448addb6-ccc4-4351-bb6b-c2b2929a1df4)
+
 
 <p align="center">
   <a href="#information">Information</a> •

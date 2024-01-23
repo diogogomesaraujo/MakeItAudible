@@ -26,13 +26,24 @@
 
 ## How To Use
 
-To use MakeItAudible, you just need a modern web browser and internet access. Follow these steps:
+To clone and run this application, you'll need [Git](https://git-scm.com) and [Python](https://www.python.org) installed on your computer. From your command line:
 
-1. Navigate to [MakeItAudible's website](#).
-2. Click on the "Choose a PDF file" button to upload the PDF document you wish to convert.
-3. Select your preferred language for the audio output.
-4. Click on the "Convert to Audio" button to start the conversion process.
-5. Once the conversion is complete, you can play the audio directly in the browser or download the MP3 file to your device.
+```bash
+# Clone this repository
+$ git clone https://github.com/diogogomesaraujo/MakeItAudible
+
+# Go into the repository
+$ cd MakeItAudible
+
+# Install dependencies
+$ pip install -r requirements.txt
+
+# Run the application
+$ python app.py
+
+# Visit the following URL in your web browser
+http://127.0.0.1:5000
+```
 
 > **Note**
 > The conversion time may vary depending on the length and complexity of the PDF document.
